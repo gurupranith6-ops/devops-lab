@@ -1,0 +1,31 @@
+services:
+
+  web:
+    build: ./app
+    container_name: flask-web
+    restart: always
+
+    environment:
+      REDIS_HOST: redis
+
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-db
+    restart: always
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx-proxy
+    restart: always
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+    depends_on:
+      - web
